@@ -10,7 +10,9 @@ from TAP.Simple import *
 
 import Dezi
 
-client = Dezi.Client('http://localhost:5000')
+ok = TAP.Builder.create(9).ok
+
+client = Dezi.Client('http://localhost:5000', debug=True)
 
 print( client )
 
@@ -26,13 +28,13 @@ ok( resp.is_success, "index scalar_ref success" )
 # add/update a Dezi.Doc to the index
 dezi_doc = Dezi.Doc( uri = 't/test-dezi-doc.xml' )
 f = open(dezi_doc.uri, 'r')
-dezi_doc.content( f.read() )
+dezi_doc.content = f.read()
 resp = client.add(dezi_doc)
 ok( resp.is_success, "index Dezi::Doc success" )
 
 doc2 = Dezi.Doc( uri='auto/xml/magic', )
-doc2.set_field( title='ima dezi doc' )
-doc2.set_field( body='hello world!' )
+doc2.set_field( 'title', 'ima dezi doc' )
+doc2.set_field( 'body', 'hello world!' )
 resp = client.add(doc2)
 ok( resp.is_success, "auto XML success" )
 
