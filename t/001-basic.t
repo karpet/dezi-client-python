@@ -10,11 +10,11 @@ from TAP.Simple import *
 
 import Dezi
 
-ok = TAP.Builder.create(9).ok
+plan(12)
 
-client = Dezi.Client('http://localhost:5000', debug=True)
+client = Dezi.Client('http://localhost:5000', debug=False)
 
-print( client )
+#print( client )
 
 # add/update a filesystem document to the index
 resp = client.add('t/test.html')
@@ -32,7 +32,7 @@ dezi_doc.content = f.read()
 resp = client.add(dezi_doc)
 ok( resp.is_success, "index Dezi::Doc success" )
 
-doc2 = Dezi.Doc( uri='auto/xml/magic', )
+doc2 = Dezi.Doc( uri='auto/xml/magic' )
 doc2.set_field( 'title', 'ima dezi doc' )
 doc2.set_field( 'body', 'hello world!' )
 resp = client.add(doc2)
@@ -44,26 +44,23 @@ resp = client.delete('foo/bar.html')
 ok( resp.is_success, "delete success" )
 
 # search the index
-response = client.search( q='dezi' )
+response = client.get( q = 'dezi' )
 
-diag( pprint(vars( response )) )
+#pprint.pprint(vars( response ), sys.stderr)
 
 ## iterate over results
-#for my $result ( @{ $response->results } ) {
-#
-#    #diag( dump $result );
-#    ok( $result->uri, "get result uri" );
-#    diag(
-#        sprintf(
-#            "--\n uri: %s\n title: %s\n score: %s\n swishmime: %s\n",
-#            $result->uri,   $result->title,
-#            $result->score, $result->get_field('swishmime')->[0],
-#        )
-#    );
-#}
+for result in response.results:
+
+    #pprint.pprint(vars( result ), sys.stderr )
+    ok( result.uri, "get result uri %s" % result.uri )
+    diag(
+          "--\n uri: %s\n title: %s\n score: %s\n swishtitle: %s\n" % (result.uri, 
+          result.title, result.score, result.get_field('swishtitle')[0],)
+    )
 
 # print stats
-is_ok( response.total, 3, "got 3 results" );
-ok( response.search_time, "got search_time" );
-ok( response.build_time,  "got build time" );
-is_ok( response.query, "dezi", "round-trip query string" );
+is_ok( response.total, 3, "got 3 results" )
+ok( response.search_time, "got search_time" )
+ok( response.build_time,  "got build time" )
+is_ok( response.query, 'dezi', "round-trip query string" )
+diag( response.query )
