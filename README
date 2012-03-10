@@ -3,6 +3,10 @@ from https://github.com/bmjames/python-rest-client.git
 and the Python TAP unit testing library 
 from https://github.com/rjbs/pytap.git
 
+To avoid warnings in python-rest-client about deprecated MD5 and SHA hashing code,
+install the newest version of httplib2 from
+http://code.google.com/p/httplib2/downloads/list
+
 dezi_client is a Python client for the Dezi search platform.
 
 Copyright 2012 by Peter Karman
