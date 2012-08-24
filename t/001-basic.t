@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 # include local python rest client lib
-# assuming this is installed already
+# not assuming this is installed already
+# but might be in parallel dir (as it is for me)
 import sys
 sys.path.append("../python-rest-client")
 sys.path.append(".")
@@ -10,11 +11,11 @@ from TAP.Simple import *
 
 import Dezi
 
-plan(12)
+plan(11)
 
 client = Dezi.Client('http://localhost:5000', debug=False)
 
-#print( client )
+diag("testing Dezi pythong client version " + client.version )
 
 # add/update a filesystem document to the index
 resp = client.add('t/test.html')
@@ -54,13 +55,13 @@ for result in response.results:
     #pprint.pprint(vars( result ), sys.stderr )
     ok( result.uri, "get result uri %s" % result.uri )
     diag(
-          "--\n uri: %s\n title: %s\n score: %s\n swishtitle: %s\n" % (result.uri, 
-          result.title, result.score, result.get_field('swishtitle')[0],)
+          "--\n uri: %s\n title: %s\n score: %s\n swishmime: %s\n" % (result.uri, 
+          result.title, result.score, result.get_field('swishmime')[0],)
     )
 
 # print stats
-is_ok( response.total, 3, "got 3 results" )
+is_ok( response.total, 2, "got 2 results" )
 ok( response.search_time, "got search_time" )
 ok( response.build_time,  "got build time" )
-is_ok( response.query, 'dezi', "round-trip query string" )
-diag( response.query )
+eq_ok( response.query, "dezi", "round-trip query string" )
+#diag( response.query )

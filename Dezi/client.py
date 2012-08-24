@@ -20,7 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import sys
+import os
+from restful_lib import Connection
+import pprint
+import json
+import Dezi
+
 class Client(object):
+
+    version = '0.001000'
+
     def __init__(self, server, search='/search', index='/index', debug=False):
         
         self.server = server
