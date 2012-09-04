@@ -1,4 +1,4 @@
 check:
-	prove -r t
+	PYTHONPATH='.' prove -r t
 
 test: check

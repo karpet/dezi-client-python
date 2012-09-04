@@ -2,3 +2,7 @@ Revision history for dezi-client-python
 
 0.001000    24 Aug 2012
     * initial release
+
+0.001001    3 Sept 2012
+    * support Dezi 0.001008 with commit() and rollback() methods
+    * add Response.status() method

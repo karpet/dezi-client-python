@@ -29,7 +29,7 @@ import Dezi
 
 class Client(object):
 
-    version = '0.001000'
+    version = '0.001001'
 
     def __init__(self, server, search='/search', index='/index', debug=False):
         
@@ -48,6 +48,8 @@ class Client(object):
         paths = json.loads(resp['body'])
         self.searcher   = Connection(paths['search'])
         self.indexer    = Connection(paths['index'])
+        self.commit_uri = paths['commit']
+        self.rollback_uri = paths['rollback']
         self.fields     = paths['fields']
         self.facets     = paths['facets']
 
@@ -104,6 +106,16 @@ class Client(object):
         
     def delete(self, uri):
         resp = self.indexer.request_delete(uri)
+        return Dezi.Response(resp)
+        
+    def commit(self):
+        ua = Connection(self.commit_uri)
+        resp = ua.request_post('/')
+        return Dezi.Response(resp)
+        
+    def rollback(self):
+        ua = Connection(self.rollback_uri)
+        resp = ua.request_post('/')
         return Dezi.Response(resp)
         
     def get(self, **my_args):
@@ -224,6 +236,9 @@ class Response(object):
             return True
         else:
             return False
+            
+    def status(self):
+        return self.http_resp['headers']['status']
         
         
 # from http://pynuggets.wordpress.com/2011/06/06/dict2xml-4/

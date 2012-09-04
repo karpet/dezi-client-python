@@ -6,12 +6,13 @@
 import sys
 sys.path.append("../python-rest-client")
 sys.path.append(".")
+
 import pprint
 from TAP.Simple import *
 
 import Dezi
 
-plan(11)
+plan(14)
 
 client = Dezi.Client('http://localhost:5000', debug=False)
 
@@ -39,6 +40,11 @@ doc2.set_field( 'body', 'hello world!' )
 resp = client.add(doc2)
 ok( resp.is_success, "auto XML success" )
 
+# commit changes
+resp = client.commit()
+ok( resp.is_success, "commit changes" )
+eq_ok( resp.status(), '200', "/commit status == 200")
+
 # remove a document from the index
 
 resp = client.delete('foo/bar.html')
@@ -60,7 +66,7 @@ for result in response.results:
     )
 
 # print stats
-is_ok( response.total, 2, "got 2 results" )
+eq_ok( response.total, 3, "got 3 results" )
 ok( response.search_time, "got search_time" )
 ok( response.build_time,  "got build time" )
 eq_ok( response.query, "dezi", "round-trip query string" )
