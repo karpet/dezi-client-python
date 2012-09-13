@@ -25,18 +25,21 @@ import os
 from restful_lib import Connection
 import pprint
 import json
+import re
 import Dezi
 
 class Client(object):
 
-    version = '0.001001'
+    version = '0.002000'
 
-    def __init__(self, server, search='/search', index='/index', debug=False):
+    def __init__(self, server, search='/search', index='/index', debug=False, username=False, password=False):
         
         self.server = server
         self.search = search
         self.index  = index
         self.debug  = debug
+        self.un     = username
+        self.pw     = password
         
         # docs: 
         # http://code.google.com/p/python-rest-client/wiki/Using_Connection
@@ -47,11 +50,12 @@ class Client(object):
         #pprint.pprint(resp)
         paths = json.loads(resp['body'])
         self.searcher   = Connection(paths['search'])
-        self.indexer    = Connection(paths['index'])
+        self.indexer    = Connection(paths['index'], username=username, password=password)
         self.commit_uri = paths['commit']
         self.rollback_uri = paths['rollback']
         self.fields     = paths['fields']
         self.facets     = paths['facets']
+        
 
     def __str__(self):
         return unicode(self).encode('utf-8')
@@ -109,12 +113,12 @@ class Client(object):
         return Dezi.Response(resp)
         
     def commit(self):
-        ua = Connection(self.commit_uri)
+        ua = Connection(self.commit_uri, username=self.un, password=self.pw)
         resp = ua.request_post('/')
         return Dezi.Response(resp)
         
     def rollback(self):
-        ua = Connection(self.rollback_uri)
+        ua = Connection(self.rollback_uri, username=self.un, password=self.pw)
         resp = ua.request_post('/')
         return Dezi.Response(resp)
         
@@ -200,8 +204,15 @@ class Doc(object):
 class Response(object):
     def __init__(self, http_resp):
         self.http_resp = http_resp
+        
+        if ('headers' not in http_resp):
+            raise Exception("http_resp does not look valid. No headers.")
 
         if ('body' not in http_resp or len(http_resp['body'])==0):
+            raise Exception("http_resp does not look valid. No body.")
+
+        self.is_ok = re.match('^2\d\d', http_resp['headers']['status'])
+        if (self.is_ok == None):
             return
             
         body = json.loads(http_resp['body'])
@@ -231,11 +242,11 @@ class Response(object):
         #pprint.pprint(vars(self))
         
     def is_success(self):
-        #pprint.pprint(self.http_resp)
-        if (self.http_resp['headers']['status'] == 200):
-            return True
-        else:
+        #pprint.pprint(self.http_resp, sys.stderr)
+        if (self.is_ok == None):
             return False
+        else:
+            return True
             
     def status(self):
         return self.http_resp['headers']['status']
