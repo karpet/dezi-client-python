@@ -30,7 +30,7 @@ import Dezi
 
 class Client(object):
 
-    version = '0.002000'
+    version = '0.002001'
 
     def __init__(self, server, search='/search', index='/index', debug=False, username=False, password=False):
         

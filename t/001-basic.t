@@ -12,7 +12,7 @@ from TAP.Simple import *
 
 import Dezi
 
-plan(14)
+plan(15)
 
 client = Dezi.Client('http://localhost:5000', debug=False, username='foo', password='bar')
 
@@ -71,4 +71,9 @@ eq_ok( response.total, 3, "got 3 results" )
 ok( response.search_time, "got search_time" )
 ok( response.build_time,  "got build time" )
 eq_ok( response.query, "dezi", "round-trip query string" )
+ok( response.suggestions, "got suggestions" )
+for suggestion in response.suggestions:
+    diag("suggestion: %s\n" % (suggestion))
+
+
 #diag( response.query )

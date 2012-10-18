@@ -9,3 +9,6 @@ Revision history for dezi-client-python
 
 0.002000    12 Sept 2012
     * add username/password support for Dezi 0.002000
+
+0.002001    17 Oct 2012
+    * add tests for Dezi 0.2.4 with response.suggestions
